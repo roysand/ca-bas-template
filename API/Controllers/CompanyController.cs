@@ -20,7 +20,7 @@ namespace API.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> GetAll()
         {
             var result = await _context.CompanySet.ToListAsync();
             return Ok(result);
@@ -28,7 +28,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("{organizationNo}")]
-        public async Task<ActionResult> Get(string organizationNo)
+        public async Task<ActionResult> GetByOrgNo(string organizationNo)
         {
             var result = await _context.CompanySet.Where(w => w.OrganizationNo == organizationNo).ToListAsync();
             if (result.Count == 0)
@@ -46,7 +46,7 @@ namespace API.Controllers
             var result = await _context.AddAsync(company);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return CreatedAtAction(nameof(GetByOrgNo), new { organizationNo = result.Entity.OrganizationNo }, result.Entity);
         }
      }
 }
