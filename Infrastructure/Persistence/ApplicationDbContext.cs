@@ -23,8 +23,26 @@ namespace Infrastructure.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var connectionString = _configuration.GetConnectionString("AFConnectionString");
+
+                optionsBuilder.UseSqlServer(connectionString);
+            }
 
             base.OnConfiguring(optionsBuilder);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Company>(entity =>
+            {
+                entity.HasKey(c => c.OrganizationNo);
+                
+                entity.ToTable("Company","Aktivitetsfabrikken");
+            });
+            
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
