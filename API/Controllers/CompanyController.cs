@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Domain.Entities;
-using Infrastructure.Persistence;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace API.Controllers
 {
     public class CompanyController : ApiControllerBase
     {
-        private readonly  ApplicationDbContext _context;
+        private readonly IRepository<Company> _companyRepository;
 
-        public CompanyController(ApplicationDbContext context)
+        public CompanyController(IRepository<Company> companyRepository)
         {
-            _context = context;
+            _companyRepository = companyRepository;
         }
         
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var result = await _context.CompanySet.ToListAsync();
+            var result =  _companyRepository.All();
             return Ok(result);
         }
 
@@ -30,23 +26,22 @@ namespace API.Controllers
         [Route("{organizationNo}")]
         public async Task<ActionResult> GetByOrgNo(string organizationNo)
         {
-            var result = await _context.CompanySet.Where(w => w.OrganizationNo == organizationNo).ToListAsync();
-            if (result.Count == 0)
+            var result = _companyRepository.Find(w => w.OrganizationNo == organizationNo);
+            if (result.Any())
             {
-                return NotFound();
+                return Ok(result);
             }
-            
 
-            return Ok(result);
+            return NotFound();
         }
         
         [HttpPost]
         public async Task<ActionResult> Post([FromBody]Company company)
         {
-            var result = await _context.AddAsync(company);
-            await _context.SaveChangesAsync();
+            var result = _companyRepository.Add(company);
+            // await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetByOrgNo), new { organizationNo = result.Entity.OrganizationNo }, result.Entity);
+            return CreatedAtAction(nameof(GetByOrgNo), new { organizationNo = result.OrganizationNo }, result);
         }
      }
 }
