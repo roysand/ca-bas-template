@@ -5,12 +5,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common.Interfaces;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Persistence
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         private readonly IConfiguration _configuration;
 
@@ -22,7 +23,7 @@ namespace Infrastructure.Persistence
         public DbSet<Company> CompanySet { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
+        {   
             if (!optionsBuilder.IsConfigured)
             {
                 var connectionString = _configuration.GetConnectionString("AFConnectionString");

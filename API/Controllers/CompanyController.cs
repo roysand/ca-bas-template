@@ -1,7 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Application.Common.Company.Command.CreateCompany;
+using Application.Common.Company.Queries.GetCompany;
+using Application.Common.Company.Queries.GetCustomers;
+using Application.Common.Interfaces;
 using Domain.Entities;
 using Infrastructure.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -10,15 +16,16 @@ namespace API.Controllers
     {
         private readonly IRepository<Company> _companyRepository;
 
-        public CompanyController(IRepository<Company> companyRepository)
+        public CompanyController(IRepository<Company> companyRepository, IMediator mediator) : base(mediator)
         {
             _companyRepository = companyRepository;
         }
         
         [HttpGet]
-        public async Task<ActionResult> GetAll()
+        public async Task<ActionResult<IEnumerable<Company>>> GetAll()
         {
-            var result =  _companyRepository.All();
+            var query = new GetCompanyQuery();
+            var result = await Mediator.Send(query);
             return Ok(result);
         }
 
@@ -36,10 +43,9 @@ namespace API.Controllers
         }
         
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody]Company company)
+        public async Task<ActionResult> Post([FromBody] CreateCompanyCommand query)
         {
-            var result = _companyRepository.Add(company);
-            // await _context.SaveChangesAsync();
+            var result = await Mediator.Send(query);
 
             return CreatedAtAction(nameof(GetByOrgNo), new { organizationNo = result.OrganizationNo }, result);
         }

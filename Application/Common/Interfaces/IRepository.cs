@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Infrastructure.Repositories
+namespace Application.Common.Interfaces
 {
     public interface IRepository<T>
     {
