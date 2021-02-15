@@ -36,13 +36,8 @@ namespace Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Company>(entity =>
-            {
-                entity.HasKey(c => c.OrganizationNo);
-                
-                entity.ToTable("Company","Aktivitetsfabrikken");
-            });
-            
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
             base.OnModelCreating(modelBuilder);
         }
     }

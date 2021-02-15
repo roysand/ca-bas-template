@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Common;
 using Application;
 using Infrastructure;
+using Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+
+// using Microsoft.OpenApi.Models;
 
 namespace API
 {
@@ -49,13 +53,20 @@ namespace API
                 });
             }
 
-            app.UseHttpsRedirection();
+            //app.UseSwaggerUi3(settings =>
+            //{
+            //    settings.Path = "/api";
+            //    settings.DocumentPath = "/api/specification.json";
+            //});
 
-            app.UseRouting();
+            app.UseCustomExceptionHandler();
+                app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+                app.UseRouting();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+                app.UseAuthorization();
+
+                app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

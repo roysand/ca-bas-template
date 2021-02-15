@@ -1,35 +1,46 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using MediatR;
 
 namespace Application.Common.Company.Queries.GetCompany
 {
-    public class GetCompanyFindQuery : IRequest<IEnumerable<Domain.Entities.Company>>
+    public class GetCompanyByOrganizationNoQuery : IRequest<IEnumerable<Domain.Entities.Company>>
     {
         public  string OrganizationNumber;
 
-        public GetCompanyFindQuery(string orgNr)
+        public GetCompanyByOrganizationNoQuery(string orgNr)
         {
             OrganizationNumber = orgNr;
         }
     }
 
-    public class GetCompanyFindQueryHandler : IRequestHandler<GetCompanyFindQuery, IEnumerable<Domain.Entities.Company>>
+    public class GetCompanyByOrganizationNoHandler : IRequestHandler<GetCompanyByOrganizationNoQuery, IEnumerable<Domain.Entities.Company>>
     {
         private ICompanyRepository<Domain.Entities.Company> _companyRepository;
 
-        public GetCompanyFindQueryHandler(ICompanyRepository<Domain.Entities.Company> repository)
+        public GetCompanyByOrganizationNoHandler(ICompanyRepository<Domain.Entities.Company> repository)
         {
             _companyRepository = repository;
         }
-        public async Task<IEnumerable<Domain.Entities.Company>> Handle(GetCompanyFindQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Domain.Entities.Company>> Handle(GetCompanyByOrganizationNoQuery request, CancellationToken cancellationToken)
         {
-            return _companyRepository.Find(c => c.OrganizationNo == request.OrganizationNumber);
+            var result =  _companyRepository.Find(c => c.OrganizationNo == request.OrganizationNumber);
+
+            if (result.Any())
+            {
+                return result;
+            }
+            else
+            {
+                throw new NotFoundException(nameof(Company), request.OrganizationNumber);
+            }
         }
     }
 }
