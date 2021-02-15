@@ -22,7 +22,7 @@ namespace API.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Company>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CompanyDto>>> GetAll()
         {
             var query = new GetCompanyQuery();
             var result = await Mediator.Send(query);

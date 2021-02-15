@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application;
 using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -26,13 +27,13 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddInfrastructure(Configuration);
+            services.AddApplication();
+            services.AddControllers();
 
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "API", Version = "v1"}); });
             //services.AddTransient<ApplicationDbContext>();
             //services.AddTransient<IRepository<Company>, CompanyRepository>();
-            services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -17,6 +17,7 @@ namespace Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,
             IConfiguration configuration)
         {
+            services.AddTransient<IApplicationDbContext,ApplicationDbContext>();
             services.AddTransient<ApplicationDbContext>();
             services.AddTransient<IRepository<Company>, CompanyRepository>();
 

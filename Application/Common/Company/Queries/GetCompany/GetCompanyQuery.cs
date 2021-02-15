@@ -1,27 +1,38 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Company.Queries.GetCustomers;
 using Application.Common.Interfaces;
 using MediatR;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Common.Company.Queries.GetCompany
 {
-    public class GetCompanyQuery : IRequest<IEnumerable<Domain.Entities.Company>>
+    public class GetCompanyQuery : IRequest<IEnumerable<CompanyDto>>
     {
     }
 
-    public class GetCustomerQueryHandler : IRequestHandler<GetCompanyQuery, IEnumerable<Domain.Entities.Company>>
+    public class GetCustomerQueryHandler : IRequestHandler<GetCompanyQuery, IEnumerable<CompanyDto>>
     {
 
         private readonly IRepository<Domain.Entities.Company> _companyRepository;
+        private readonly IApplicationDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public GetCustomerQueryHandler(IRepository<Domain.Entities.Company> repository)
+        public GetCustomerQueryHandler(IRepository<Domain.Entities.Company> repository, IApplicationDbContext dbContext, IMapper mapper)
         {
             _companyRepository = repository;
+            _dbContext = dbContext;
+            _mapper = mapper;
         }
-        public async Task<IEnumerable<Domain.Entities.Company>> Handle(GetCompanyQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<CompanyDto>> Handle(GetCompanyQuery request, CancellationToken cancellationToken)
         {
-            return _companyRepository.All();
+            return await _dbContext.CompanySet
+                .AsNoTracking()
+                .ProjectTo<CompanyDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(cancellationToken);
         }
     }
 }
