@@ -3,10 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Common.Company.Command.CreateCompany;
 using Application.Common.Company.Queries.GetCompany;
-using Application.Common.Company.Queries.GetCustomers;
 using Application.Common.Interfaces;
 using Domain.Entities;
-using Infrastructure.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +31,9 @@ namespace API.Controllers
         [Route("{organizationNo}")]
         public async Task<ActionResult> GetByOrgNo(string organizationNo)
         {
-            var result = _companyRepository.Find(w => w.OrganizationNo == organizationNo);
+            var query = new GetCompanyFindQuery(organizationNo);
+            var result  = await Mediator.Send(query);
+            
             if (result.Any())
             {
                 return Ok(result);

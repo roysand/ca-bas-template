@@ -11,8 +11,7 @@ namespace Application.Common.Company.Command.CreateCompany
 {
     public class CreateCompanyCommand : IRequest<Domain.Entities.Company>
     {
-        public string OrganizationNo { get; set; }
-        public string Profile { get; set; }
+        public Domain.Entities.Company Company;
     }
 
     public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, Domain.Entities.Company>
@@ -28,8 +27,8 @@ namespace Application.Common.Company.Command.CreateCompany
         {
             var company = new Domain.Entities.Company()
             {
-                OrganizationNo = request.OrganizationNo,
-                Profile = request.Profile
+                OrganizationNo = request.Company.OrganizationNo,
+                Profile = request.Company.Profile
             };
 
             company = _companyRepository.Add(company);
