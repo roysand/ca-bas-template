@@ -19,7 +19,7 @@ namespace Infrastructure
         {
             services.AddTransient<IApplicationDbContext,ApplicationDbContext>();
             services.AddTransient<ApplicationDbContext>();
-            services.AddTransient<IRepository<Company>, CompanyRepository>();
+            services.AddTransient<ICompanyRepository<Company>, CompanyRepository>();
 
             return services;
         }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Common.Company.Command.CreateCompany;
 using Application.Common.Company.Queries.GetCompany;
+using Application.Common.Company.Queries.GetCustomers;
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
@@ -12,11 +13,8 @@ namespace API.Controllers
 {
     public class CompanyController : ApiControllerBase
     {
-        private readonly IRepository<Company> _companyRepository;
-
-        public CompanyController(IRepository<Company> companyRepository, IMediator mediator) : base(mediator)
+        public CompanyController(IMediator mediator) : base(mediator)
         {
-            _companyRepository = companyRepository;
         }
         
         [HttpGet]

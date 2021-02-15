@@ -21,9 +21,9 @@ namespace Application.Common.Company.Queries.GetCompany
 
     public class GetCompanyFindQueryHandler : IRequestHandler<GetCompanyFindQuery, IEnumerable<Domain.Entities.Company>>
     {
-        private IRepository<Domain.Entities.Company> _companyRepository;
+        private ICompanyRepository<Domain.Entities.Company> _companyRepository;
 
-        public GetCompanyFindQueryHandler(IRepository<Domain.Entities.Company> repository)
+        public GetCompanyFindQueryHandler(ICompanyRepository<Domain.Entities.Company> repository)
         {
             _companyRepository = repository;
         }

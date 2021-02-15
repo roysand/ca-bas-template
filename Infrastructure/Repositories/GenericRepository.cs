@@ -11,7 +11,7 @@ namespace Infrastructure.Repositories
     public abstract class GenericRepository<T> 
         : IRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _context;
+        public readonly ApplicationDbContext _context;
 
         public GenericRepository(ApplicationDbContext context)
         {

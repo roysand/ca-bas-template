@@ -23,3 +23,8 @@ For example, if the application need to access a notification service, a new int
 * Define commands and queries as requests
 * Application layer is just a series of request / response objects
 * Ability to attach additional behaviour before and / or after each request, e.g. logging, validation, caching, authorisation and so on
+* Using CQRS + MediatR simplifies overall design
+* MediatR simplifes cross cutting concerns
+* Fluent Validation is useful for all validation scenarios
+* Automapper simplifies mapping and projections
+* Independent of infrastrucure and data access concerns

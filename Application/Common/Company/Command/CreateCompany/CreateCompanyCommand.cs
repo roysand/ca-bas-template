@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Company.Queries.GetCustomers;
 using Application.Common.Interfaces;
 using MediatR;
 
@@ -11,14 +12,15 @@ namespace Application.Common.Company.Command.CreateCompany
 {
     public class CreateCompanyCommand : IRequest<Domain.Entities.Company>
     {
-        public Domain.Entities.Company Company;
+        public string OrganizationNo { get; set; }
+        public string Profile { get; set; }
     }
 
     public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, Domain.Entities.Company>
     {
-        private readonly IRepository<Domain.Entities.Company> _companyRepository;
+        private readonly ICompanyRepository<Domain.Entities.Company> _companyRepository;
 
-        public CreateCompanyCommandHandler(IRepository<Domain.Entities.Company> repository)
+        public CreateCompanyCommandHandler(ICompanyRepository<Domain.Entities.Company> repository)
         {
             _companyRepository = repository;
         }
@@ -27,8 +29,8 @@ namespace Application.Common.Company.Command.CreateCompany
         {
             var company = new Domain.Entities.Company()
             {
-                OrganizationNo = request.Company.OrganizationNo,
-                Profile = request.Company.Profile
+                OrganizationNo = request.OrganizationNo,
+                Profile = request.Profile
             };
 
             company = _companyRepository.Add(company);

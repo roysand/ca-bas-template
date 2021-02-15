@@ -17,11 +17,11 @@ namespace Application.Common.Company.Queries.GetCompany
     public class GetCustomerQueryHandler : IRequestHandler<GetCompanyQuery, IEnumerable<CompanyDto>>
     {
 
-        private readonly IRepository<Domain.Entities.Company> _companyRepository;
+        private readonly ICompanyRepository<Domain.Entities.Company> _companyRepository;
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public GetCustomerQueryHandler(IRepository<Domain.Entities.Company> repository, IApplicationDbContext dbContext, IMapper mapper)
+        public GetCustomerQueryHandler(ICompanyRepository<Domain.Entities.Company> repository, IApplicationDbContext dbContext, IMapper mapper)
         {
             _companyRepository = repository;
             _dbContext = dbContext;
@@ -29,10 +29,11 @@ namespace Application.Common.Company.Queries.GetCompany
         }
         public async Task<IEnumerable<CompanyDto>> Handle(GetCompanyQuery request, CancellationToken cancellationToken)
         {
-            return await _dbContext.CompanySet
-                .AsNoTracking()
-                .ProjectTo<CompanyDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
+            // return await _dbContext.CompanySet
+            //     .AsNoTracking()
+            //     .ProjectTo<CompanyDto>(_mapper.ConfigurationProvider)
+            //     .ToListAsync(cancellationToken);
+            return _companyRepository.AllWithProjection();
         }
     }
 }
