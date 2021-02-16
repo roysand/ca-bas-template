@@ -46,7 +46,7 @@
       "createWebHostBuilderMethod": null,
       "startupType": null,
       "allowNullableBodyParameters": true,
-      "output": "wwwroot/api/specification.json",
+      "output": "api/specification.json",
       "outputType": "OpenApi3",
       "assemblyPaths": [],
       "assemblyConfig": null,
@@ -110,7 +110,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "web-api-client.ts"
+      "output": "api/web-api-client.ts"
     }
   }
 }
