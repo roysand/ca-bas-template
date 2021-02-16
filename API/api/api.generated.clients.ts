@@ -12,18 +12,18 @@ import { Observable, throwError as _observableThrow, of as _observableOf } from 
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
+import * as moment from 'moment';
+
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
-export interface ICompanyClient {
-    getAll(): Observable<CompanyDto[]>;
-    post(query: CreateCompanyCommand): Observable<FileResponse | null>;
-    getByOrgNo(organizationNo: string | null): Observable<FileResponse | null>;
+export interface IApiClient {
+    companyGet(): Observable<CompanyDto[]>;
+    companyPost(query: CreateCompanyCommand): Observable<FileResponse>;
+    companyGet(organizationNo: string | null): Observable<FileResponse>;
 }
 
-@Injectable({
-    providedIn: 'root'
-})
-export class CompanyClient implements ICompanyClient {
+@Injectable()
+export class ApiClient implements IApiClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -33,7 +33,7 @@ export class CompanyClient implements ICompanyClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    getAll(): Observable<CompanyDto[]> {
+    companyGet(): Observable<CompanyDto[]> {
         let url_ = this.baseUrl + "/api/Company";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -46,11 +46,11 @@ export class CompanyClient implements ICompanyClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAll(response_);
+            return this.processCompanyGet(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetAll(<any>response_);
+                    return this.processCompanyGet(<any>response_);
                 } catch (e) {
                     return <Observable<CompanyDto[]>><any>_observableThrow(e);
                 }
@@ -59,21 +59,22 @@ export class CompanyClient implements ICompanyClient {
         }));
     }
 
-    protected processGetAll(response: HttpResponseBase): Observable<CompanyDto[]> {
+    protected processCompanyGet(response: HttpResponseBase): Observable<CompanyDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        let _mappings: { source: any, target: any }[] = [];
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200 = _responseText === "" ? null : jsonParse(_responseText, this.jsonParseReviver);
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(CompanyDto.fromJS(item));
+                    result200!.push(CompanyDto.fromJS(item, _mappings));
             }
             return _observableOf(result200);
             }));
@@ -85,7 +86,7 @@ export class CompanyClient implements ICompanyClient {
         return _observableOf<CompanyDto[]>(<any>null);
     }
 
-    post(query: CreateCompanyCommand): Observable<FileResponse | null> {
+    companyPost(query: CreateCompanyCommand): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/Company";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -102,20 +103,20 @@ export class CompanyClient implements ICompanyClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPost(response_);
+            return this.processCompanyPost(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processPost(<any>response_);
+                    return this.processCompanyPost(<any>response_);
                 } catch (e) {
-                    return <Observable<FileResponse | null>><any>_observableThrow(e);
+                    return <Observable<FileResponse>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<FileResponse | null>><any>_observableThrow(response_);
+                return <Observable<FileResponse>><any>_observableThrow(response_);
         }));
     }
 
-    protected processPost(response: HttpResponseBase): Observable<FileResponse | null> {
+    protected processCompanyPost(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -132,10 +133,10 @@ export class CompanyClient implements ICompanyClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<FileResponse | null>(<any>null);
+        return _observableOf<FileResponse>(<any>null);
     }
 
-    getByOrgNo(organizationNo: string | null): Observable<FileResponse | null> {
+    companyGet(organizationNo: string | null): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/Company/{organizationNo}";
         if (organizationNo === undefined || organizationNo === null)
             throw new Error("The parameter 'organizationNo' must be defined.");
@@ -151,20 +152,20 @@ export class CompanyClient implements ICompanyClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetByOrgNo(response_);
+            return this.processCompanyGet(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetByOrgNo(<any>response_);
+                    return this.processCompanyGet(<any>response_);
                 } catch (e) {
-                    return <Observable<FileResponse | null>><any>_observableThrow(e);
+                    return <Observable<FileResponse>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<FileResponse | null>><any>_observableThrow(response_);
+                return <Observable<FileResponse>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetByOrgNo(response: HttpResponseBase): Observable<FileResponse | null> {
+    protected processCompanyGet(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -181,13 +182,13 @@ export class CompanyClient implements ICompanyClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<FileResponse | null>(<any>null);
+        return _observableOf<FileResponse>(<any>null);
     }
 }
 
 export class CompanyDto implements ICompanyDto {
-    organizationNo?: string | undefined;
-    profile?: string | undefined;
+    organizationNo!: string | undefined;
+    profile!: string | undefined;
 
     constructor(data?: ICompanyDto) {
         if (data) {
@@ -198,18 +199,16 @@ export class CompanyDto implements ICompanyDto {
         }
     }
 
-    init(_data?: any) {
+    init(_data?: any, _mappings?: any) {
         if (_data) {
             this.organizationNo = _data["organizationNo"];
             this.profile = _data["profile"];
         }
     }
 
-    static fromJS(data: any): CompanyDto {
+    static fromJS(data: any, _mappings?: any): CompanyDto | null {
         data = typeof data === 'object' ? data : {};
-        let result = new CompanyDto();
-        result.init(data);
-        return result;
+        return createInstance<CompanyDto>(data, _mappings, CompanyDto);
     }
 
     toJSON(data?: any) {
@@ -221,13 +220,13 @@ export class CompanyDto implements ICompanyDto {
 }
 
 export interface ICompanyDto {
-    organizationNo?: string | undefined;
-    profile?: string | undefined;
+    organizationNo: string | undefined;
+    profile: string | undefined;
 }
 
 export class CreateCompanyCommand implements ICreateCompanyCommand {
-    organizationNo?: string | undefined;
-    profile?: string | undefined;
+    organizationNo!: string | undefined;
+    profile!: string | undefined;
 
     constructor(data?: ICreateCompanyCommand) {
         if (data) {
@@ -238,18 +237,16 @@ export class CreateCompanyCommand implements ICreateCompanyCommand {
         }
     }
 
-    init(_data?: any) {
+    init(_data?: any, _mappings?: any) {
         if (_data) {
             this.organizationNo = _data["organizationNo"];
             this.profile = _data["profile"];
         }
     }
 
-    static fromJS(data: any): CreateCompanyCommand {
+    static fromJS(data: any, _mappings?: any): CreateCompanyCommand | null {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateCompanyCommand();
-        result.init(data);
-        return result;
+        return createInstance<CreateCompanyCommand>(data, _mappings, CreateCompanyCommand);
     }
 
     toJSON(data?: any) {
@@ -261,8 +258,69 @@ export class CreateCompanyCommand implements ICreateCompanyCommand {
 }
 
 export interface ICreateCompanyCommand {
-    organizationNo?: string | undefined;
-    profile?: string | undefined;
+    organizationNo: string | undefined;
+    profile: string | undefined;
+}
+
+function jsonParse(json: any, reviver?: any) {
+    json = JSON.parse(json, reviver);
+
+    var byid: any = {};
+    var refs: any = [];
+    json = (function recurse(obj: any, prop?: any, parent?: any) {
+        if (typeof obj !== 'object' || !obj)
+            return obj;
+        
+        if ("$ref" in obj) {
+            let ref = obj.$ref;
+            if (ref in byid)
+                return byid[ref];
+            refs.push([parent, prop, ref]);
+            return undefined;
+        } else if ("$id" in obj) {
+            let id = obj.$id;
+            delete obj.$id;
+            if ("$values" in obj)
+                obj = obj.$values;
+            byid[id] = obj;
+        }
+        
+        if (Array.isArray(obj)) {
+            obj = obj.map((v, i) => recurse(v, i, obj));
+        } else {
+            for (var p in obj) {
+                if (obj.hasOwnProperty(p) && obj[p] && typeof obj[p] === 'object')
+                    obj[p] = recurse(obj[p], p, obj);
+            }
+        }
+
+        return obj;
+    })(json);
+
+    for (let i = 0; i < refs.length; i++) {
+        const ref = refs[i];
+        ref[0][ref[1]] = byid[ref[2]];
+    }
+
+    return json;
+}
+
+function createInstance<T>(data: any, mappings: any, type: any): T | null {
+  if (!mappings)
+    mappings = [];
+  if (!data)
+    return null;
+
+  const mappingIndexName = "__mappingIndex";
+  if (data[mappingIndexName])
+    return <T>mappings[data[mappingIndexName]].target;
+
+  data[mappingIndexName] = mappings.length;
+
+  let result: any = new type();
+  mappings.push({ source: data, target: result });
+  result.init(data, mappings);
+  return result;
 }
 
 export interface FileResponse {
@@ -272,7 +330,7 @@ export interface FileResponse {
     headers?: { [name: string]: any };
 }
 
-export class SwaggerException extends Error {
+export class ApiException extends Error {
     message: string;
     status: number;
     response: string;
@@ -289,10 +347,10 @@ export class SwaggerException extends Error {
         this.result = result;
     }
 
-    protected isSwaggerException = true;
+    protected isApiException = true;
 
-    static isSwaggerException(obj: any): obj is SwaggerException {
-        return obj.isSwaggerException === true;
+    static isApiException(obj: any): obj is ApiException {
+        return obj.isApiException === true;
     }
 }
 
@@ -300,7 +358,7 @@ function throwException(message: string, status: number, response: string, heade
     if (result !== null && result !== undefined)
         return _observableThrow(result);
     else
-        return _observableThrow(new SwaggerException(message, status, response, headers, null));
+        return _observableThrow(new ApiException(message, status, response, headers, null));
 }
 
 function blobToText(blob: any): Observable<string> {
