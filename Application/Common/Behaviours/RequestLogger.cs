@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR.Pipeline;
@@ -22,7 +23,7 @@ namespace Application.Common.Behaviours
         {
             var name = typeof(TRequest).Name;
 
-            _logger.LogInformation($"Clean Architecture: Request name: {name}  Request: {request}");
+            _logger.LogInformation($"Clean Architecture: Request name: {name}  Request: {JsonSerializer.Serialize(request)}");
 
             return Task.CompletedTask;
         }

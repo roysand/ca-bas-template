@@ -79,7 +79,7 @@
       "typeAccessModifier": "public",
       "generateContractsOutput": true,
       "contractsNamespace": "Bas.Api.Client.Contracts",
-      "contractsOutputFilePath": "$(CSharpOutputPath)/Contracts.g.cs",
+      "contractsOutputFilePath": "api/Contracts.g.cs",
       "parameterDateTimeFormat": "s",
       "parameterDateFormat": "yyyy-MM-dd",
       "generateUpdateJsonSerializerSettingsMethod": true,
@@ -137,7 +137,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "$(CSharpOutputPath)/Client.g.cs",
+      "output": "api/Client.g.cs",
       "newLineBehavior": "Auto"
     },
     "openApiToTypeScriptClient": {
@@ -194,7 +194,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "$(TypescriptOutputPath)/api.generated.clients.ts"
+      "output": "api/api.generated.clients.ts"
     }
   }
 }
