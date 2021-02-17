@@ -27,7 +27,15 @@ namespace API
             services.AddApplication();
             services.AddControllers();
 
-            services.AddSwaggerDocument();
+            services.AddSwaggerDocument(settings =>
+            {
+                settings.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "[Bas] WEB Api Template";
+                    document.Info.Description = "REST API for example.";
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,18 +45,18 @@ namespace API
             {
                 app.UseDeveloperExceptionPage();
             }
+            
             app.UseOpenApi();
-
             app.UseSwaggerUi3();
 
             app.UseCustomExceptionHandler();
-                app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
-                app.UseRouting();
+            app.UseRouting();
 
-                app.UseAuthorization();
+            app.UseAuthorization();
 
-                app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

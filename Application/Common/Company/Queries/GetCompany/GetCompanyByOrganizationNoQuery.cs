@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Company.Queries.GetCustomers;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using AutoMapper;
