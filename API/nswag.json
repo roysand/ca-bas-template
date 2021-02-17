@@ -1,6 +1,6 @@
 ﻿{
   "runtime": "Net50",
-  "defaultVariables": "CSharpOutputPath=..\\Client.CSharp",
+  "defaultVariables": "CSharpOutputPath=../GeneratedClients/Client.CSharp",
   "documentGenerator": {
     "aspNetCoreToOpenApi": {
       "project": "Api.csproj",
@@ -79,7 +79,7 @@
       "typeAccessModifier": "public",
       "generateContractsOutput": true,
       "contractsNamespace": "Bas.Api.Client.Contracts",
-      "contractsOutputFilePath": "api/Contracts.g.cs",
+      "contractsOutputFilePath": "../GeneratedClients/Client.CSharp/Contracts.g.cs",
       "parameterDateTimeFormat": "s",
       "parameterDateFormat": "yyyy-MM-dd",
       "generateUpdateJsonSerializerSettingsMethod": true,
@@ -137,7 +137,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "api/Client.g.cs",
+      "output": "../GeneratedClients/Client.CSharp/Client.g.cs",
       "newLineBehavior": "Auto"
     },
     "openApiToTypeScriptClient": {
