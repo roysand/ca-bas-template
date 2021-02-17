@@ -14,11 +14,11 @@ These classes should be based on interfaces defined within the application layer
 * Independent of the database
 * Use Fluent API Configuration over Data Annontations
 * Prefer conventions over configuration
-* Automatically apply all entity type configurations
+* Fluent Validation and Automatically apply all entity type configurations
 * No layers depend on Infrastructure layer e.q. Presentation Layer
 
 
-# Shuld we use Unit of Work and Repository Patterns
+# Should we use Unit of Work and Repository Patterns
 Should we implement these patterns?
 It isn't always the best choice, because:
 * EF Core insulates your code from database changes

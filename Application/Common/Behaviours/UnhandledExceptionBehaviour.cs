@@ -28,7 +28,7 @@ namespace Application.Common.Behaviours
             {
                 var requestName = typeof(TRequest).Name;
 
-                _logger.LogError(ex, "ca_template Request: Unhandled Exception for Request {Name} {@Request}", requestName, request);
+                _logger.LogError(ex, "Clean Architecture: Request: Unhandled Exception for Request {Name} {@Request}", requestName, request);
 
                 throw;
             }

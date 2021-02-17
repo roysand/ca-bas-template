@@ -40,7 +40,7 @@ namespace API
                     webBuilder.ConfigureLogging(logging =>
                     {
                         logging.ClearProviders();
-                        logging.SetMinimumLevel(LogLevel.Information);
+                        // logging.SetMinimumLevel(LogLevel.Information);
                     })
                     .UseNLog();
                 });
