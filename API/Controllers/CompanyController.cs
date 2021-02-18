@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Application.Common.Company.Command.CreateCompany;
 using Application.Common.Company.Queries.GetCompany;
@@ -25,7 +26,10 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("{organizationNo}")]
-        public async Task<ActionResult> GetByOrgNo(string organizationNo)
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<CompanyDto>>> GetByOrgNo(string organizationNo)
         {
             var query = new GetCompanyByOrganizationNoQuery(organizationNo);
             var result  = await Mediator.Send(query);
@@ -34,7 +38,8 @@ namespace API.Controllers
         }
         
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] CreateCompanyCommand query)
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        public async Task<IActionResult> Post([FromBody] CreateCompanyCommand query)
         {
             var result = await Mediator.Send(query);
 

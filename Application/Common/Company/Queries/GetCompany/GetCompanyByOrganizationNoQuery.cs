@@ -13,7 +13,7 @@ using MediatR;
 
 namespace Application.Common.Company.Queries.GetCompany
 {
-    public class GetCompanyByOrganizationNoQuery : IRequest<IEnumerable<Domain.Entities.Company>>
+    public class GetCompanyByOrganizationNoQuery : IRequest<IEnumerable<CompanyDto>>
     {
         public string OrganizationNumber { get; set; }
 
@@ -23,23 +23,23 @@ namespace Application.Common.Company.Queries.GetCompany
         }
     }
 
-    public class GetCompanyByOrganizationNoHandler : IRequestHandler<GetCompanyByOrganizationNoQuery, IEnumerable<Domain.Entities.Company>>
+    public class GetCompanyByOrganizationNoHandler : IRequestHandler<GetCompanyByOrganizationNoQuery, IEnumerable<CompanyDto>>
     {
         private ICompanyRepository<Domain.Entities.Company> _companyRepository;
-        public readonly IMapper _mapper;
+        private readonly IMapper _mapper;
 
         public GetCompanyByOrganizationNoHandler(ICompanyRepository<Domain.Entities.Company> repository, IMapper mapper)
         {
             _companyRepository = repository;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<Domain.Entities.Company>> Handle(GetCompanyByOrganizationNoQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<CompanyDto>> Handle(GetCompanyByOrganizationNoQuery request, CancellationToken cancellationToken)
         {
             var result =  await _companyRepository.Find(c => c.OrganizationNo == request.OrganizationNumber);
-
+            
             if (result.Any())
             {
-                return result;
+                return _mapper.Map<IEnumerable<CompanyDto>>(result);
             }
             else
             {
