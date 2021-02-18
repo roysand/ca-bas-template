@@ -32,7 +32,7 @@ namespace API
                 settings.PostProcess = document =>
                 {
                     document.Info.Version = "v1";
-                    document.Info.Title = "[Bas] WEB Api Template";
+                    document.Info.Title = "[bas] WEB Api Template";
                     document.Info.Description = "REST API for example.";
                 };
             });

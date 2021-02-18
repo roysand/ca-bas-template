@@ -12,7 +12,7 @@ namespace Application.Common.Company.Command.CreateCompany
         public CreateCompanyCommandValidator()
         {
             RuleFor(v => v.OrganizationNo)
-                .MaximumLength(20)
+                .MaximumLength(9)
                 .NotEmpty();
         }
     }

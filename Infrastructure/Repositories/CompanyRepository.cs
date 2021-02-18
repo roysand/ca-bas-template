@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Application.Common.Company.Queries.GetCustomers;
 using Application.Common.Interfaces;
 using AutoMapper;
@@ -19,12 +20,12 @@ namespace Infrastructure.Repositories
             _mapper = mapper;
         }
 
-        public IEnumerable<CompanyDto> AllWithProjection()
+        public async Task<IEnumerable<CompanyDto>> AllWithProjection()
         {
-            return _context.CompanySet
+            return await _context.CompanySet
                 .AsNoTracking()
                 .ProjectTo<CompanyDto>(_mapper.ConfigurationProvider)
-                .ToList();
+                .ToListAsync();
         }
     }
 }

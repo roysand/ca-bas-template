@@ -33,7 +33,7 @@ namespace Application.Common.Company.Queries.GetCompany
             //     .AsNoTracking()
             //     .ProjectTo<CompanyDto>(_mapper.ConfigurationProvider)
             //     .ToListAsync(cancellationToken);
-            return _companyRepository.AllWithProjection();
+            return await _companyRepository.AllWithProjection();
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Application.Common.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -25,22 +26,22 @@ namespace Infrastructure.Repositories
                 .Entity;
         }
 
-        public virtual IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
+        public  virtual async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
         {
-            return _context.Set<T>()
+            return await _context.Set<T>()
                 .AsQueryable()
-                .Where(predicate).ToList();
+                .Where(predicate).ToListAsync();
         }
 
-        public virtual T Get(Guid id)
+        public virtual async  Task<T> Get(Guid id)
         {
-            return _context.Find<T>(id);
+            return await _context.FindAsync<T>(id);
         }
         
-        public virtual IEnumerable<T> All()
+        public virtual async Task<IEnumerable<T>> All()
         {
-            return _context.Set<T>()
-                .ToList();
+            return await _context.Set<T>()
+                .ToListAsync();
         }
 
         public virtual T Update(T entity)
@@ -49,9 +50,9 @@ namespace Infrastructure.Repositories
                 .Entity;
         }
 
-        public void SaveChanges()
+        public async Task SaveChanges()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

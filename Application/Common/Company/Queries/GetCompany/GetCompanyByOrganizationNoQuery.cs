@@ -35,7 +35,7 @@ namespace Application.Common.Company.Queries.GetCompany
         }
         public async Task<IEnumerable<Domain.Entities.Company>> Handle(GetCompanyByOrganizationNoQuery request, CancellationToken cancellationToken)
         {
-            var result =  _companyRepository.Find(c => c.OrganizationNo == request.OrganizationNumber);
+            var result =  await _companyRepository.Find(c => c.OrganizationNo == request.OrganizationNumber);
 
             if (result.Any())
             {

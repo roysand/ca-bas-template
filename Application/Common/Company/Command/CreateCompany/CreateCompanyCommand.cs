@@ -34,7 +34,7 @@ namespace Application.Common.Company.Command.CreateCompany
             };
 
             company = _companyRepository.Add(company);
-            _companyRepository.SaveChanges();
+            await _companyRepository.SaveChanges();
 
             return company;
         }
