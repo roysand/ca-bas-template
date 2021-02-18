@@ -7,182 +7,177 @@
 //----------------------
 // ReSharper disable InconsistentNaming
 
-import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 'rxjs/operators';
-import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
-import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 
-import * as moment from 'moment';
-
-export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
+import * as dayjs from 'dayjs';
 
 export interface IApiClient {
-    companyGet(): Observable<CompanyDto[]>;
-    companyPost(query: CreateCompanyCommand): Observable<FileResponse>;
-    companyGet(organizationNo: string | null): Observable<FileResponse>;
+    companyGet(): Promise<CompanyDto[]>;
+    companyPost(query: CreateCompanyCommand): Promise<FileResponse>;
+    companyGet(organizationNo: string | null): Promise<FileResponse>;
 }
 
-@Injectable()
 export class ApiClient implements IApiClient {
-    private http: HttpClient;
+    private instance: AxiosInstance;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+        this.instance = instance ? instance : axios.create();
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    companyGet(): Observable<CompanyDto[]> {
+    companyGet(  cancelToken?: CancelToken | undefined): Promise<CompanyDto[]> {
         let url_ = this.baseUrl + "/api/Company";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
                 "Accept": "application/json"
-            })
+            },
+            cancelToken
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCompanyGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCompanyGet(<any>response_);
-                } catch (e) {
-                    return <Observable<CompanyDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CompanyDto[]>><any>_observableThrow(response_);
-        }));
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCompanyGet(_response);
+        });
     }
 
-    protected processCompanyGet(response: HttpResponseBase): Observable<CompanyDto[]> {
+    protected processCompanyGet(response: AxiosResponse): Promise<CompanyDto[]> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         let _mappings: { source: any, target: any }[] = [];
         if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            const _responseText = response.data;
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : jsonParse(_responseText, this.jsonParseReviver);
+            let resultData200  = _responseText;
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
                     result200!.push(CompanyDto.fromJS(item, _mappings));
             }
-            return _observableOf(result200);
-            }));
+            return result200;
         } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
         }
-        return _observableOf<CompanyDto[]>(<any>null);
+        return Promise.resolve<CompanyDto[]>(<any>null);
     }
 
-    companyPost(query: CreateCompanyCommand): Observable<FileResponse> {
+    companyPost(query: CreateCompanyCommand , cancelToken?: CancelToken | undefined): Promise<FileResponse> {
         let url_ = this.baseUrl + "/api/Company";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(query);
 
-        let options_ : any = {
-            body: content_,
-            observe: "response",
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
             responseType: "blob",
-            headers: new HttpHeaders({
+            method: "POST",
+            url: url_,
+            headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/octet-stream"
-            })
+            },
+            cancelToken
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCompanyPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCompanyPost(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCompanyPost(_response);
+        });
     }
 
-    protected processCompanyPost(response: HttpResponseBase): Observable<FileResponse> {
+    protected processCompanyPost(response: AxiosResponse): Promise<FileResponse> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const contentDisposition = response.headers ? response.headers["content-disposition"] : undefined;
             const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
             const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+            return Promise.resolve({ fileName: fileName, status: status, data: response.data as Blob, headers: _headers });
         } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
         }
-        return _observableOf<FileResponse>(<any>null);
+        return Promise.resolve<FileResponse>(<any>null);
     }
 
-    companyGet(organizationNo: string | null): Observable<FileResponse> {
+    companyGet(organizationNo: string | null , cancelToken?: CancelToken | undefined): Promise<FileResponse> {
         let url_ = this.baseUrl + "/api/Company/{organizationNo}";
         if (organizationNo === undefined || organizationNo === null)
             throw new Error("The parameter 'organizationNo' must be defined.");
         url_ = url_.replace("{organizationNo}", encodeURIComponent("" + organizationNo));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ : any = {
-            observe: "response",
+        let options_ = <AxiosRequestConfig>{
             responseType: "blob",
-            headers: new HttpHeaders({
+            method: "GET",
+            url: url_,
+            headers: {
                 "Accept": "application/octet-stream"
-            })
+            },
+            cancelToken
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCompanyGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCompanyGet(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCompanyGet(_response);
+        });
     }
 
-    protected processCompanyGet(response: HttpResponseBase): Observable<FileResponse> {
+    protected processCompanyGet(response: AxiosResponse): Promise<FileResponse> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
         if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const contentDisposition = response.headers ? response.headers["content-disposition"] : undefined;
             const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
             const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+            return Promise.resolve({ fileName: fileName, status: status, data: response.data as Blob, headers: _headers });
         } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
         }
-        return _observableOf<FileResponse>(<any>null);
+        return Promise.resolve<FileResponse>(<any>null);
     }
 }
 
@@ -354,25 +349,13 @@ export class ApiException extends Error {
     }
 }
 
-function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): Observable<any> {
+function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
     if (result !== null && result !== undefined)
-        return _observableThrow(result);
+        throw result;
     else
-        return _observableThrow(new ApiException(message, status, response, headers, null));
+        throw new ApiException(message, status, response, headers, null);
 }
 
-function blobToText(blob: any): Observable<string> {
-    return new Observable<string>((observer: any) => {
-        if (!blob) {
-            observer.next("");
-            observer.complete();
-        } else {
-            let reader = new FileReader();
-            reader.onload = event => {
-                observer.next((<any>event.target).result);
-                observer.complete();
-            };
-            reader.readAsText(blob);
-        }
-    });
+function isAxiosError(obj: any | undefined): obj is AxiosError {
+    return obj && obj.isAxiosError === true;
 }
