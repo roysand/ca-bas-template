@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Common.Company.Queries.GetCustomers;
+using Application.Common.Behaviours.CommandAndQueries.Company.Queries.GetCompany;
 
 namespace Application.Common.Interfaces
 {
     public interface ICompanyRepository<T> : IRepository<T>
     {
-        Task<IEnumerable<CompanyDto>> AllWithProjection();
+        Task<IEnumerable<CompanyDto>> GetAll();
     }
 }

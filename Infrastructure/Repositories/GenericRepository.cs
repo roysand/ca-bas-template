@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
 using Infrastructure.Persistence;
@@ -26,22 +27,22 @@ namespace Infrastructure.Repositories
                 .Entity;
         }
 
-        public  virtual async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
+        public  virtual async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
         {
             return await _context.Set<T>()
                 .AsQueryable()
-                .Where(predicate).ToListAsync();
+                .Where(predicate).ToListAsync(cancellationToken);
         }
 
-        public virtual async  Task<T> Get(Guid id)
+        public virtual async  Task<T> Get(Guid id, CancellationToken cancellationToken)
         {
-            return await _context.FindAsync<T>(id);
+            return await _context.FindAsync<T>(id, cancellationToken);
         }
         
-        public virtual async Task<IEnumerable<T>> All()
+        public virtual async Task<IEnumerable<T>> All(CancellationToken cancellationToken)
         {
             return await _context.Set<T>()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
         public virtual T Update(T entity)
@@ -50,9 +51,9 @@ namespace Infrastructure.Repositories
                 .Entity;
         }
 
-        public async Task SaveChanges()
+        public async Task SaveChanges(CancellationToken cancellationToken)
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

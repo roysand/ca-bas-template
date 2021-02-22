@@ -1,15 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
-using Application.Common.Exceptions;
-using Application.Common.Interfaces;
-using MediatR;
-
-namespace Application.Common.Company.Queries.GetCompany
+namespace Application.Common.Behaviours.CommandAndQueries.Company.Queries.GetCompany
 {
     // public class GetCompanyByOrganizationNoQuery : IRequest<IEnumerable<Domain.Entities.Company>>
     // {

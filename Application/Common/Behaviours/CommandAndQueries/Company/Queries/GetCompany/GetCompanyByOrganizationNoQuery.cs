@@ -1,17 +1,13 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Common.Company.Queries.GetCustomers;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using AutoMapper;
 using MediatR;
 
-namespace Application.Common.Company.Queries.GetCompany
+namespace Application.Common.Behaviours.CommandAndQueries.Company.Queries.GetCompany
 {
     public class GetCompanyByOrganizationNoQuery : IRequest<IEnumerable<CompanyDto>>
     {
@@ -35,7 +31,7 @@ namespace Application.Common.Company.Queries.GetCompany
         }
         public async Task<IEnumerable<CompanyDto>> Handle(GetCompanyByOrganizationNoQuery request, CancellationToken cancellationToken)
         {
-            var result =  await _companyRepository.Find(c => c.OrganizationNo == request.OrganizationNumber);
+            var result =  await _companyRepository.Find(c => c.OrganizationNo == request.OrganizationNumber, cancellationToken);
             
             if (result.Any())
             {
@@ -43,7 +39,7 @@ namespace Application.Common.Company.Queries.GetCompany
             }
             else
             {
-                throw new NotFoundException(nameof(Company),request.OrganizationNumber);
+                throw new NotFoundException(nameof(CompanyDto),request.OrganizationNumber);
             }
         }
     }

@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Common.Company.Queries.GetCustomers;
+using Application.Common.Behaviours.CommandAndQueries.Company.Queries.GetCompany;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Common.Mappings;
 using AutoMapper;
 using MediatR;
 
-namespace Application.Common.Company.Command.CreateCompany
+namespace Application.Common.Behaviours.CommandAndQueries.Company.Command.CreateCompany
 {
     public class CreateCompanyCommand : IMapFrom<Domain.Entities.Company>, IRequest<CompanyDto>
     {
@@ -38,18 +36,18 @@ namespace Application.Common.Company.Command.CreateCompany
         public async Task<CompanyDto> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
         {
             // Does Company exists
-            var company = await _companyRepository.Find(c => c.OrganizationNo == request.OrganizationNo);
+            var company = await _companyRepository.Find(c => c.OrganizationNo == request.OrganizationNo, cancellationToken);
             if (!company.Any())
             {
                 var company2Insert = _mapper.Map<Domain.Entities.Company>(request); 
 
                 company2Insert = _companyRepository.Add(company2Insert);
-                await _companyRepository.SaveChanges();
+                await _companyRepository.SaveChanges(cancellationToken);
                 
                 return _mapper.Map<CompanyDto>(company2Insert);
             }
 
-            throw new NotFoundException(nameof(Company),request.OrganizationNo);
+            throw new NotFoundException(nameof(CompanyDto),request.OrganizationNo);
         }
     }
 }

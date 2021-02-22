@@ -1,12 +1,6 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common.Company.Queries.GetCustomers;
 
-namespace Application.Common.Company.Command.CreateCompany
+namespace Application.Common.Behaviours.CommandAndQueries.Company.Command.CreateCompany
 {
     public class CreateCompanyCommandValidator : AbstractValidator<CreateCompanyCommand>
     {

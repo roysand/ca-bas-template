@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Common.Company.Queries.GetCustomers;
+using Application.Common.Behaviours.CommandAndQueries.Company.Queries.GetCompany;
 using Application.Common.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<CompanyDto>> AllWithProjection()
+        public async Task<IEnumerable<CompanyDto>> GetAll()
         {
             return await _context.CompanySet
                 .AsNoTracking()

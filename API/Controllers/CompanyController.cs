@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Application.Common.Company.Command.CreateCompany;
-using Application.Common.Company.Queries.GetCompany;
-using Application.Common.Company.Queries.GetCustomers;
+using Application.Common.Behaviours.CommandAndQueries.Company.Command.CreateCompany;
+using Application.Common.Behaviours.CommandAndQueries.Company.Queries.GetCompany;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

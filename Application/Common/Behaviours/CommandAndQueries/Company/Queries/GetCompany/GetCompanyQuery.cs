@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Common.Company.Queries.GetCustomers;
 using Application.Common.Interfaces;
-using MediatR;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 
-namespace Application.Common.Company.Queries.GetCompany
+namespace Application.Common.Behaviours.CommandAndQueries.Company.Queries.GetCompany
 {
     public class GetCompanyQuery : IRequest<IEnumerable<CompanyDto>>
     {
@@ -28,7 +25,7 @@ namespace Application.Common.Company.Queries.GetCompany
         }
         public async Task<IEnumerable<CompanyDto>> Handle(GetCompanyQuery request, CancellationToken cancellationToken)
         {
-            return await _companyRepository.AllWithProjection();
+            return await _companyRepository.GetAll();
         }
     }
 }
