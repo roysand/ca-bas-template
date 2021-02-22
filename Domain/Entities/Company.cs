@@ -5,8 +5,8 @@ using System.Collections.Generic;
 
 namespace Domain.Entities {
     
-    public class Company {
-        public string OrganizationNo { get; set; }
-        public string Profile { get; set; }
+    public record Company {
+        public string OrganizationNo { get; init; }
+        public string Profile { get; init; }
     }
 }
